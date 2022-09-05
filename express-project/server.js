@@ -1,5 +1,8 @@
 const express = require("express")
 
+const messagesController = require("./controllers/messages.controller")
+const friendsController = require("./controllers/friends.controller")
+
 const app = express()
 
 const PORT = 3000
@@ -22,22 +25,17 @@ app.use((req, res, next) => {
 	console.log(`${req.method} ${req.url} ${delta}ms`)
 })
 
-app.get("/friends", (req, res) => {
-	res.json(friends)
-})
+app.use(express.json())
 
-app.get("/friends/:friendsId", (req, res) => {
-	const friendId = Number(req.params.friendsId);
-	const friend = friends[friendId];
+app.post("/friends", friendsController.postFriend)
 
-	if (friend) {
-		res.json(friend)
-	} else {
-		res.status(404).json({
-			error: "Friend doesn't found"
-		})
-	}
-})
+app.get("/friends", friendsController.getFriends)
+
+app.get("/friends/:friendsId", friendsController.getFriend)
+
+app.get("/messages", messagesController.getMessages)
+
+app.post("/messages", messagesController.postMessages)
 
 app.listen(PORT, () => {
 	console.log(`Listening on ${PORT}...`)
